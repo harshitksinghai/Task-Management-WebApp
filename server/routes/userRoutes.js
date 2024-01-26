@@ -14,7 +14,7 @@ import {
 router.post('/auth', authUser); // final route will be /api/users/auth
 router.post('/', registerUser);
 router.post('/logout', logoutUser);
-router.get('/main')
+router.get('/main', getUserMainPage);
 
 
 export default router;
