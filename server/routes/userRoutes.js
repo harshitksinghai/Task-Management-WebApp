@@ -2,7 +2,7 @@
 
 import express from "express";
 const router = express.Router();
-
+import {protect} from '../middleware/authMiddleware.js';
 import { 
     authUser,
     registerUser,
@@ -14,7 +14,7 @@ import {
 router.post('/', registerUser); // final route will be /api/users/
 router.post('/auth', authUser); // final route will be /api/users/auth
 router.post('/logout', logoutUser); // final route will be /api/users/logout
-router.get('/main', getUserMainPage); // final route will be /api/users/main
+router.get('/main', protect, getUserMainPage); // final route will be /api/users/main
 
 
 export default router;
