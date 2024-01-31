@@ -16,6 +16,7 @@ const notFound = (req, res, next) => { // this does not have parameter 'err' so 
   
     res.status(statusCode).json({
       message: message,
+      // if project is in development then show the error stack
       stack: process.env.NODE_ENV === 'production' ? null : err.stack,
     });
   };

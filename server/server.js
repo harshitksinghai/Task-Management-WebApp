@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 connectDB();
@@ -11,10 +12,11 @@ const port = process.env.PORT;
 
 app.use(express.json()); // allows to parse raw json
 app.use(express.urlencoded({extended: true})); // allows to use form data
+app.use(cookieParser());
 app.use('/api/users', userRoutes);
 
 app.get('/', (req, res) => {
-    res.send("Server up and running!");
+    res.send("Server is up and running!");
 });
 
 // next() is like a callback function
