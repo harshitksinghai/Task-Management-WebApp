@@ -2,18 +2,34 @@ import express from "express";
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import userRoutes from './routes/userRoutes.js';
+import taskRoutes from './routes/taskRoutes.js';
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import cookieParser from "cookie-parser";
+import cors from 'cors';
 
 dotenv.config();
 connectDB();
 const app = express();
 const port = process.env.PORT;
 
+
+// Allow requests from localhost:5173
+const corsOptions = {
+    origin: process.env.CLIENT_URL,
+    optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+    credentials: true
+  };
+  
+app.use(cors(corsOptions));
+
+
 app.use(express.json()); // allows to parse raw json
 app.use(express.urlencoded({extended: true})); // allows to use form data
 app.use(cookieParser());
+
 app.use('/api/users', userRoutes);
+app.use('/api/tasks', taskRoutes);
+
 
 app.get('/', (req, res) => {
     res.send("Server is up and running!");
