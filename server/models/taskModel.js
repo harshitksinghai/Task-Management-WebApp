@@ -1,21 +1,25 @@
 import mongoose from "mongoose";
 
 const taskSchema = new mongoose.Schema({
-    title:{
+    userId:{
         type: String,
-        default: ""
+        required: true
     },
-    completion:{
-        type: Boolean,
-        default: false
-    },
-    project:{
-        type: Boolean,
-        default: false
-    },
-    projectId:{
+    type:{
         type: String,
-        default: ""
+        required: true
+    },
+    properties:{
+        type: mongoose.Schema.Types.Mixed,
+        default:{}
+    },
+    content:{
+        type: [String],
+        default: []
+    },
+    parentId:{
+        type: String,
+        default: null
     }
 
 },{
