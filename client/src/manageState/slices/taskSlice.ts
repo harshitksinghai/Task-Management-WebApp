@@ -40,15 +40,17 @@ export const taskSlice = createSlice({
     deleteTaskLocal: (state, action) => {
       state.tasks = state.tasks.filter((task: any) => task._id !== action.payload.taskId);
     },
+    clearTasksLocal: (state) => {
+      state.tasks = [];
+    },
     updateTaskLocal: (state, action: PayloadAction<{ taskId: string }>) => {
-      const taskToUpdate = state.tasks.find(
-        (task) => task._id === action.payload.taskId
-      );
+      const taskToUpdate = state.tasks.find((task) => task._id === action.payload.taskId);
       // Update the task as needed
     },
+
   },
 });
 
-export const { createTaskLocal, fetchTasksToLocal, deleteTaskLocal } = taskSlice.actions;
+export const { createTaskLocal, fetchTasksToLocal, deleteTaskLocal, clearTasksLocal } = taskSlice.actions;
 
 export default taskSlice.reducer;

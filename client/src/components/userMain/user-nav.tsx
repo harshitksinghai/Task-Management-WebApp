@@ -16,10 +16,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useLogoutMutation } from "@/manageState/slices/usersApiSlice";
 import { logoutLocal } from "@/manageState/slices/authSlice";
+import { clearTasksLocal } from "@/manageState/slices/taskSlice";
 
 export function UserNav() {
 
-  const {userInfo} = useSelector((state: any) => state.auth);
+  //const {userInfo} = useSelector((state: any) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [logoutApiCall] = useLogoutMutation(); 
@@ -28,6 +29,7 @@ export function UserNav() {
     try {
       await logoutApiCall({}).unwrap();
       dispatch(logoutLocal());
+      dispatch(clearTasksLocal()); // Dispatch the clearTasks action
       navigate('/');
     } catch (err) {
       

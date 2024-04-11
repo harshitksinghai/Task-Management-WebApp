@@ -17,6 +17,7 @@ const TodayTasks = (props: { parentId: string | null }) => {
     async function getTasks() {
       try {
         const tasks = await fetchTasks({userId});
+        console.log(tasks);
         dispatch(fetchTasksToLocal(tasks));
       } catch (err) {
         console.error("Error fetching tasks:", err);
