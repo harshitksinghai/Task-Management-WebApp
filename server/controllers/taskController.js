@@ -1,49 +1,64 @@
 import asyncHandler from 'express-async-handler';
 import Task from '../models/taskModel.js';
 
+// @desc    create a new task
+// route    POST /api/tasks/create
+// @access  Private
 const createTask = asyncHandler(async (req, res) => {
-    const {title, project} = req.body;
-
-    const projectValue = project !== undefined ? project : false;
+    const { userId, type, properties, content, parentId, isCompleted } = req.body;
 
     const task = await Task.create({
-        title: title,
-        project: projectValue
+        userId: userId,
+        type: type,
+        properties: properties,
+        content: content,
+        parentId: parentId,
+        isCompleted: isCompleted
     });
 
-    if(task){
+    if (task) {
         res.status(201).json({
             _id: task._id,
-            title: task.title,
-            completion: task.completion,
-            project: task.project
+            userId: task.userId,
+            type: task.type,
+            properties: task.properties,
+            content: task.content,
+            parentId: task.parentId,
+            isCompleted: task.isCompleted
         });
     }
-    else{
+    else {
         res.status(400);
         throw new Error("Invalid Task Data");
     }
 });
 
+// @desc    show all tasks
+// route    GET /api/tasks
+// @access  Private
 const showTasks = asyncHandler(async (req, res) => {
-    const tasks = await Task.find();
-    if(tasks){
+    const userId = req.body.userId;
+    const tasks = await Task.find({userId: userId});
+    if (tasks) {
         res.status(200).json(tasks);
     }
-    else{
+    else {
         res.status(500);
         throw new Error("Unable to fetch data from database");
     }
-    
+
 });
 
+// @desc    delete an existing task
+// route    POST /api/tasks/:taskId
+// @access  Private
 const deleteTaskById = asyncHandler(async (req, res) => {
-    const taskID = req.params.taskId;
-    const deletedTask = await Task.findByIdAndDelete(taskID);
-    if(deletedTask){
+    const taskId = req.params.taskId;
+    const deletedTask = await Task.findByIdAndDelete(taskId);
+    if (deletedTask) {
         res.status(200).json(deletedTask);
     }
-    else{
+    else {
         res.status(500);
         throw new Error("Task deletion unsuccessful");
     }

@@ -3,8 +3,20 @@ import Footer from "@/components/marketing/Footer";
 import { Heading } from "@/components/marketing/Heading";
 import Navbar from "@/components/marketing/Navbar";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 const Marketing = () => {
+  const navigate = useNavigate();
+  const {userInfo} = useSelector((state: any) => state.auth);
+  
+  useEffect(() => {
+    if(userInfo){
+      navigate('/main');
+    }
+  }, [navigate, userInfo]);
+  
   return (
     <ThemeProvider defaultTheme="system" storageKey="task-theme">
     <div className="h-full dark:bg-[#1F1F1F]">

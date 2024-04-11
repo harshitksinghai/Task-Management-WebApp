@@ -1,11 +1,13 @@
-import { Button } from "../components/ui/button";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 import { Icons } from "@/components/ui/icons";
-import apiRequest from "@/connects/apiRequest";
 import { cn } from "@/lib/utils";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { useRegisterMutation } from "@/manageState/slices/usersApiSlice";
+import { setCredentials } from "@/manageState/slices/authSlice";
 
 interface LoginUserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -13,25 +15,37 @@ export function RegisterForm({ className, ...props }: LoginUserAuthFormProps) {
   const [name, setName] = React.useState<string>("");
   const [email, setEmail] = React.useState<string>("");
   const [password, setPassword] = React.useState<string>("");
+  const [confirmPassword, setConfirmPassword] = React.useState<string>("");
+  const [isPassConfirmed, setIsPassConfirmed] = React.useState<boolean>(false);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const [showPasswordInput, setShowPasswordInput] =
     React.useState<boolean>(false);
   const [error, setError] = React.useState<string>("");
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [register] = useRegisterMutation();
+
+  const {userInfo} = useSelector((state: any) => state.auth);
+
+  React.useEffect(() => {
+    if(userInfo){
+      navigate('/main');
+    }
+  }, [navigate, userInfo]);
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      setIsPassConfirmed(false);
       setIsLoading(true);
-      await apiRequest.post(`/api/users`, {
-        name,
-        email,
-        password,
-      });
+      const res = await register({name, email, password}).unwrap();
+      dispatch(setCredentials({ user: res}));
       navigate("/main");
     } catch (err: any) {
-      setError(err.response.data.message);
+      setIsPassConfirmed(true);
+      setError(err.data.message);
     } finally {
       setIsLoading(false);
     }
@@ -59,8 +73,8 @@ export function RegisterForm({ className, ...props }: LoginUserAuthFormProps) {
     // Validate password if the password field is shown
     if (showPasswordInput) {
       // Validate password presence
-      if (!password) {
-        setError("Password is required");
+      if (!password || !confirmPassword) {
+        setError("Password and it's confirmation is required");
         return;
       }
     }
@@ -86,7 +100,32 @@ export function RegisterForm({ className, ...props }: LoginUserAuthFormProps) {
   }
 
   function handlePasswordInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setPassword(e.target.value);
+    const value = e.target.value;
+    setPassword(value);
+    if(isPassConfirmed){
+      if (value === confirmPassword) {
+        // Passwords match, no error
+        setError("");
+      } else {
+        // Passwords don't match, set error
+        setError("Passwords do not match");
+      }
+    }
+  }
+
+  function handleConfirmPasswordInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value;
+    setConfirmPassword(value);
+    setIsPassConfirmed(true);
+
+    // Check if confirmPassword matches password
+    if (value === password) {
+      // Passwords match, no error
+      setError("");
+    } else {
+      // Passwords don't match, set error
+      setError("Passwords do not match");
+    }
   }
 
   return (
@@ -138,6 +177,19 @@ export function RegisterForm({ className, ...props }: LoginUserAuthFormProps) {
                 disabled={isLoading}
                 value={password}
                 onChange={handlePasswordInputChange}
+              />
+              <Label className="sr-only" htmlFor="password">
+                Confirm Password
+              </Label>
+              <Input
+                id="password"
+                placeholder="Confirm Password"
+                type="password"
+                autoComplete="current-password"
+                autoCorrect="off"
+                disabled={isLoading}
+                value={confirmPassword}
+                onChange={handleConfirmPasswordInputChange}
               />
             </div>
           )}

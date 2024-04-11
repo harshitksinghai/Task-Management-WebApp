@@ -12,12 +12,26 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { ModeToggleDropdown } from "./mode-toggle-dropdown";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { useLogoutMutation } from "@/manageState/slices/usersApiSlice";
+import { logoutLocal } from "@/manageState/slices/authSlice";
 
 export function UserNav() {
 
+  const {userInfo} = useSelector((state: any) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [logoutApiCall] = useLogoutMutation(); 
+
   async function handleLogout(){
-    await apiRequest.get(`/api/users/logout`);
+    try {
+      await logoutApiCall({}).unwrap();
+      dispatch(logoutLocal());
+      navigate('/');
+    } catch (err) {
+      
+    }
   }
 
   return (

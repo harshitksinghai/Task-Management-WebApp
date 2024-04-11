@@ -1,11 +1,15 @@
 import apiRequest from "@/connects/apiRequest";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 import { Icons } from "@/components/ui/icons";
 import { cn } from "@/lib/utils";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { useLoginMutation } from "@/manageState/slices/usersApiSlice";
+import { setCredentials } from "@/manageState/slices/authSlice";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -16,16 +20,25 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
   const [showPasswordInput, setShowPasswordInput] =
     React.useState<boolean>(false);
     const [error, setError] = React.useState<string>("");
+
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const [login] = useLoginMutation();
+  const {userInfo} = useSelector((state: any) => state.auth);
+
+  useEffect(() => {
+    if(userInfo){
+      navigate('/main');
+    }
+  }, [navigate, userInfo]);
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       setIsLoading(true);
-      await apiRequest.post(`/api/users/auth`, {
-        email,
-        password,
-      });
+      const res = await login({email, password}).unwrap();
+      dispatch(setCredentials({user: res}));
       navigate("/main");
     } catch (err: any) {
       setError(err.response.data.message);

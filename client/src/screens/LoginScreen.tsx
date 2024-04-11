@@ -3,7 +3,7 @@ import {Link} from "react-router-dom"
 
 import { cn } from "@/lib/utils"
 import { buttonVariants } from "../components/ui/button"
-import { LoginForm } from "../components/loginForm.jsx"
+import { LoginForm } from "../components/marketing/loginForm.js"
 
 interface Metadata {
   title: string;

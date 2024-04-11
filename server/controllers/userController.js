@@ -7,6 +7,7 @@ import generateToken from '../utils/generateToken.js';
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
     const {name, email, password} = req.body;
+
     const userExists = await User.findOne({email: email}); // if no matching data/value is found, return null, otherwise return value. So if there is value assigned to userExists, then it will output true in if(userExists)
     if(userExists){
         res.status(400);
@@ -18,7 +19,11 @@ const registerUser = asyncHandler(async (req, res) => {
         email: email,
         password: password
     });
-
+    console.log("afterrrrr");
+    console.log(user.name);
+    console.log(user.email);
+    console.log(user._id);
+    console.log('--------');
     if(user){
         generateToken(res, user._id);
         res.status(201).json({
@@ -38,9 +43,8 @@ const registerUser = asyncHandler(async (req, res) => {
 // @access  Public
 const authUser = asyncHandler(async (req, res) => {
     const {email, password} = req.body;
-    
-    const user = await User.findOne({email:email});
 
+    const user = await User.findOne({email:email});
     if(user && (await user.matchPassword(password))){
         generateToken(res, user._id);
         res.status(201).json({

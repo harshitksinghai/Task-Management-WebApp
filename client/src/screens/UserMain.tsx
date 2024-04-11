@@ -1,6 +1,7 @@
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import TodayTasks from "@/components/userMain/TodayTasks";
+import TaskHome from "@/components/userMain/TaskHome";
 import UserMainNav from "@/components/userMain/UserMainNav";
+
 
 const UserMain = () => {
   return (
@@ -8,7 +9,7 @@ const UserMain = () => {
       <div className="h-full dark:bg-[#1F1F1F] flex flex-col justify-center items-center">
         <UserMainNav />
         <div className="h-full pt-40 flex flex-col items-center justify-center">
-          <TodayTasks />
+          <TaskHome />
         </div>
       </div>
     </ThemeProvider>

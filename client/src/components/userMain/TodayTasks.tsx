@@ -1,95 +1,43 @@
-import { Link } from "react-router-dom";
-import { Button } from "../ui/button";
-import { Checkbox } from "../ui/checkbox";
-import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
-import apiRequest from "@/connects/apiRequest";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-type TTask = {
-  _id: string;
-  title: string;
-  completion: boolean;
-  project: boolean;
-};
+import Task from "./Task";
+import { useDispatch, useSelector } from "react-redux";
+import { useFetchTasksMutation } from "@/manageState/slices/taskApiSlice";
+import { fetchTasksToLocal } from "@/manageState/slices/taskSlice";
 
-const TodayTasks = () => {
-  const [title, setTitle] = useState("");
-  //const [project, getProject] = useState(false);
-  const [tasks, setTasks] = useState<TTask[]>([]);
+const TodayTasks = (props: { parentId: string | null }) => {
+
+  const { userInfo } = useSelector((state: any) => state.auth);
+  const userId = userInfo._id;
+  const [fetchTasks] = useFetchTasksMutation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    async function fetchTasks() {
+    async function getTasks() {
       try {
-        const response = await apiRequest
-          .get("/api/tasks")
-          .then((response) => response.data);
-        setTasks(response);
+        const tasks = await fetchTasks({userId});
+        dispatch(fetchTasksToLocal(tasks));
       } catch (err) {
         console.error("Error fetching tasks:", err);
       }
     }
-    fetchTasks();
+    getTasks();
   }, []);
 
-  async function handleCreateTask(e: React.FormEvent) {
-    e.preventDefault();
-    const response = await apiRequest.post(`/api/tasks`, {
-      title,
-    });
-    const task = await response.data;
-    setTasks([...tasks, task]);
-    setTitle("");
-  }
-
-  async function handleDeleteTaskById(taskId: string) {
-    await apiRequest.delete(`/api/tasks/${taskId}`);
-    setTasks(tasks.filter((task) => task._id !== taskId));
-  }
-
+  const { tasks } = useSelector((state: any) => state.task);
+  
   return (
     <div>
-      <form onSubmit={handleCreateTask}>
-        <label className="block mb-2 text-lg font-bold ">Add Task</label>
-        <div className="mt-4 flex items-center border-t border-gray-300 pt-4">
-          <Checkbox />
-          <div className="h-6 border-l border-gray-300 mx-2"></div>
-          <Input
-            className="min-w-[17rem]"
-            placeholder="Enter task..."
-            value={title}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setTitle(e.target.value);
-            }}
-          />
-          <Button variant={"outline"}>Add</Button>
-        </div>
-      </form>
       <div>
         <Separator className="my-4" />
         <label className="block mb-2 text-lg font-bold">My Tasks</label>
         <Separator className="my-3" />
 
-        {tasks.map((task) => (
-          <>
-            <div className="flex items-center text-sm left-0">
-              <Checkbox />
-              <div className="h-6 border-l border-gray-300 mx-2"></div>
-              <div
-                key={task._id}
-                className="border border-gray-200 rounded-lg p-2 min-w-[17rem]"
-              >
-                <Link to={`/main/:${task._id}`}>{task.title}</Link>
-              </div>
-              <Button
-                variant={"ghost"}
-                onClick={() => handleDeleteTaskById(task._id)}
-              >
-                X
-              </Button>
-            </div>
-            <Separator className="my-3" />
-          </>
+        {tasks.map((task: any) => (
+          <div key={task._id} className='mt-1'>
+            <Task task={task} parentId={props.parentId} />
+          </div>
         ))}
       </div>
     </div>
