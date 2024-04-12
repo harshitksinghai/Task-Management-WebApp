@@ -1,10 +1,9 @@
 import { Separator } from "../ui/separator";
 import { useEffect } from "react";
-
-import Task from "./Task";
 import { useDispatch, useSelector } from "react-redux";
 import { useFetchTasksMutation } from "@/manageState/slices/taskApiSlice";
 import { fetchTasksToLocal } from "@/manageState/slices/taskSlice";
+import Task from "./Task";
 
 const TodayTasks = (props: { parentId: string | null }) => {
 
@@ -17,7 +16,6 @@ const TodayTasks = (props: { parentId: string | null }) => {
     async function getTasks() {
       try {
         const tasks = await fetchTasks({userId});
-        console.log(tasks);
         dispatch(fetchTasksToLocal(tasks));
       } catch (err) {
         console.error("Error fetching tasks:", err);

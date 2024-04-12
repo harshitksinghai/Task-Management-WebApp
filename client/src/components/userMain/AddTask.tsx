@@ -8,14 +8,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { Separator } from "../ui/separator";
+import MorePropertiesDropdownAddTask from "./MorePropertiesDropdownAddTask";
 import { useCreateTaskMutation } from "@/manageState/slices/taskApiSlice";
-import { TaskProperties, createTaskLocal } from "@/manageState/slices/taskSlice";
+import {
+  TaskProperties,
+  createTaskLocal,
+} from "@/manageState/slices/taskSlice";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-
 const AddTask = (props: { parentId: string | null }) => {
-
   const [title, setTitle] = useState<string>("");
 
   const defaultTypeValue = "task";
@@ -38,6 +41,8 @@ const AddTask = (props: { parentId: string | null }) => {
     setProperties((prevProperties) => ({
       ...prevProperties,
       [key]: value,
+      // Add isCompleted key with the desired value
+      isCompleted: isCompleted,
     }));
   };
 
@@ -55,37 +60,43 @@ const AddTask = (props: { parentId: string | null }) => {
         properties,
         content,
         parentId,
-        isCompleted,
       });
       //console.log(task); // data {....}
       dispatch(createTaskLocal(task));
       setTitle("");
-      setType('task');
+      setType("task");
     } catch (err) {
       console.log(err);
     }
   }
 
   return (
-    <div>
-      <form onSubmit={handleCreateTask}>
-        <label className="block mb-2 text-lg font-bold ">Add Task</label>
-        <div className="mt-4 flex items-center border-t border-gray-300 pt-4 space-x-4">
-          <Select onValueChange={(value) => setType(value)} defaultValue={defaultTypeValue}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder={type === 'task' ? 'Task' : 'Project'} />
+    <>
+    <label className="block mb-2 text-lg font-bold">Add Task</label>
+        <Separator className="my-3" />
+
+      <form
+        onSubmit={handleCreateTask}
+        className="flex w-full items-center space-x-1"
+      >
+        <div className="flex w-full flex-col items-start justify-between rounded-md border space-x-1 px-1 py-1 sm:flex-row sm:items-center">
+          <Select
+            onValueChange={(value) => setType(value)}
+            defaultValue={defaultTypeValue}
+          >
+            <SelectTrigger className="w-[87px]">
+              <SelectValue placeholder={type === "task" ? "Task" : "Project"} />
             </SelectTrigger>
             <SelectContent>
-            <SelectGroup>
-              <SelectItem value="task">
-                Task
-              </SelectItem>
-              <SelectItem value="project">Project</SelectItem>
+              <SelectGroup>
+                <SelectItem value="task">Task</SelectItem>
+                <SelectItem value="project">Project</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
+
           <Input
-            className="min-w-[17rem]"
+            className="min-w-[37rem]"
             placeholder="Enter task..."
             value={title}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,11 +105,15 @@ const AddTask = (props: { parentId: string | null }) => {
               addOrUpdateProperty("title", updatedTitle);
             }}
           />
-          <Button variant={"outline"} type="submit">Add</Button>
+          <MorePropertiesDropdownAddTask addOrUpdateProperty={addOrUpdateProperty}/>
+          <div className="flex flex-col items-start justify-between rounded-md border px-1 py-0 sm:flex-row sm:items-center">
+            <Button variant={"ghost"} type="submit">
+              Add
+            </Button>
+          </div>
         </div>
       </form>
-      
-    </div>
+    </>
   );
 };
 

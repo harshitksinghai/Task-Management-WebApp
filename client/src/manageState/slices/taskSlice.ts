@@ -2,6 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface TaskProperties {
   title?: string;
+  isCompleted?: boolean;
+  dueDate?: Date;
   // Add other properties here as needed
 }
 
@@ -12,7 +14,6 @@ interface Task {
   properties: TaskProperties;
   content: string[];
   parentId: string;
-  isCompleted: boolean;
 }
 
 interface TaskState {
@@ -47,7 +48,6 @@ export const taskSlice = createSlice({
       const taskToUpdate = state.tasks.find((task) => task._id === action.payload.taskId);
       // Update the task as needed
     },
-
   },
 });
 

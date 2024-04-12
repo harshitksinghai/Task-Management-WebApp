@@ -21,11 +21,6 @@ const taskSchema = new mongoose.Schema({
         type: String,
         default: null
     },
-    isCompleted:{
-        type: Boolean,
-        default: false
-    }
-
 },{
     timestamps: true
 });

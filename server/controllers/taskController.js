@@ -5,7 +5,7 @@ import Task from '../models/taskModel.js';
 // route    POST /api/tasks/create
 // @access  Private
 const createTask = asyncHandler(async (req, res) => {
-    const { userId, type, properties, content, parentId, isCompleted } = req.body;
+    const { userId, type, properties, content, parentId } = req.body;
 
     const task = await Task.create({
         userId: userId,
@@ -13,7 +13,6 @@ const createTask = asyncHandler(async (req, res) => {
         properties: properties,
         content: content,
         parentId: parentId,
-        isCompleted: isCompleted
     });
 
     if (task) {
@@ -24,7 +23,6 @@ const createTask = asyncHandler(async (req, res) => {
             properties: task.properties,
             content: task.content,
             parentId: task.parentId,
-            isCompleted: task.isCompleted
         });
     }
     else {
@@ -46,7 +44,6 @@ const showTasks = asyncHandler(async (req, res) => {
         res.status(500);
         throw new Error("Unable to fetch data from database");
     }
-
 });
 
 // @desc    delete an existing task
@@ -64,8 +61,32 @@ const deleteTaskById = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    update an existing task
+// route    PATCH /api/tasks/:taskId
+// @access  Private
+const updateTask = asyncHandler(async (req, res) => {
+    const taskId = req.params.taskId;
+    const { properties } = req.body;
+    const taskToUpdate = await Task.findById(taskId);
+    if (!taskToUpdate) {
+        res.status(404);
+        throw new Error('Task not found');
+    }
+    try {
+        taskToUpdate.properties = { ...taskToUpdate.properties, ...properties };
+        const updatedTask = await taskToUpdate.save();
+        res.status(200).json(updatedTask);
+    } catch (err) {
+        res.status(500);
+        throw new Error("Task updation unsuccessful");
+    }
+});
+
+
+
 export {
     createTask,
     showTasks,
-    deleteTaskById
+    deleteTaskById,
+    updateTask
 };
