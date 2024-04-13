@@ -1,5 +1,4 @@
 
-import * as React from "react"
 import { CalendarIcon } from "@radix-ui/react-icons"
 import { format } from "date-fns"
 
@@ -11,11 +10,21 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { useMemo, useState } from "react"
 
-type handleUpdateTaskPropertyFunction = (key: string, value: any) => void;
 
-export function SetAndSeeDueDate() {
-  const [date, setDate] = React.useState<Date>()
+export function SetAndSeeDueDate(props: any) {
+  const [dueDate, setDueDate] = useState(props.dueDate)
+
+  const memoizedDueDate = useMemo(() => {
+    return dueDate ? new Date(dueDate) : undefined;
+  }, [dueDate]);
+
+  function handleDueDateUpdate(dueDate: Date | undefined){
+    const serializableDate = dueDate ? dueDate.toISOString() : undefined; // local time to UTC
+    setDueDate(serializableDate);
+    props.handleUpdateTaskProperty("dueDate", serializableDate);
+  }
 
   return (
     <Popover>
@@ -24,18 +33,18 @@ export function SetAndSeeDueDate() {
           variant={"outline"}
           className={cn(
             "w-[240px] justify-start text-left font-normal min-w-[13rem]",
-            !date && "text-muted-foreground"
+            !dueDate && "text-muted-foreground"
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
+          {dueDate ? format(dueDate, "PPP") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
         <Calendar
           mode="single"
-          selected={date}
-          onSelect={setDate}
+          selected={memoizedDueDate}
+          onSelect={handleDueDateUpdate}
           initialFocus
         />
       </PopoverContent>

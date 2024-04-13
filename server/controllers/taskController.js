@@ -73,7 +73,7 @@ const updateTask = asyncHandler(async (req, res) => {
         throw new Error('Task not found');
     }
     try {
-        taskToUpdate.properties = { ...taskToUpdate.properties, ...properties };
+        taskToUpdate.properties = { ...properties };
         const updatedTask = await taskToUpdate.save();
         res.status(200).json(updatedTask);
     } catch (err) {

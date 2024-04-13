@@ -10,41 +10,36 @@ import {
 } from "../ui/select";
 import { Separator } from "../ui/separator";
 import MorePropertiesDropdownAddTask from "./MorePropertiesDropdownAddTask";
-import { useCreateTaskMutation } from "@/manageState/slices/taskApiSlice";
 import {
-  TaskProperties,
-  createTaskLocal,
-} from "@/manageState/slices/taskSlice";
-import { useState } from "react";
+  setDueDate,
+  setType,
+  setTitle,
+  setParentId,
+  clearProperties,
+} from "@/manageState/slices/addTaskStatesSlice";
+import { useCreateTaskMutation } from "@/manageState/slices/taskApiSlice";
+import { createTaskLocal } from "@/manageState/slices/taskSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const AddTask = (props: { parentId: string | null }) => {
-  const [title, setTitle] = useState<string>("");
-
-  const defaultTypeValue = "task";
-  const [type, setType] = useState<string>(defaultTypeValue);
-
-  const [properties, setProperties] = useState<TaskProperties>({});
-
   const dispatch = useDispatch();
 
   const { userInfo } = useSelector((state: any) => state.auth);
   const userId = userInfo._id;
 
+  const { type } = useSelector((state: any) => state.addTaskStates);
+  const defaultTypeValue = "task";
+
+  const { properties } = useSelector((state: any) => state.addTaskStates);
+  const title = useSelector((state: any) => state.addTaskStates.properties.title);
+
+  const { content } = useSelector((state: any) => state.addTaskStates);
+  const { parentId } = useSelector((state: any) => state.addTaskStates);
+  if (props.parentId !== null) {
+    dispatch(setParentId(props.parentId));
+  }
+
   const [createTask] = useCreateTaskMutation();
-
-  const content: string[] = [];
-  const parentId = props.parentId ? props.parentId : null;
-  const isCompleted = false;
-
-  const addOrUpdateProperty = (key: string, value: any) => {
-    setProperties((prevProperties) => ({
-      ...prevProperties,
-      [key]: value,
-      // Add isCompleted key with the desired value
-      isCompleted: isCompleted,
-    }));
-  };
 
   async function handleCreateTask(e: React.FormEvent) {
     e.preventDefault();
@@ -63,8 +58,12 @@ const AddTask = (props: { parentId: string | null }) => {
       });
       //console.log(task); // data {....}
       dispatch(createTaskLocal(task));
-      setTitle("");
-      setType("task");
+
+      dispatch(setType("task"));
+      dispatch(setDueDate(undefined));
+      dispatch(setTitle(""));
+      dispatch(setParentId(null));
+      dispatch(clearProperties());
     } catch (err) {
       console.log(err);
     }
@@ -72,8 +71,8 @@ const AddTask = (props: { parentId: string | null }) => {
 
   return (
     <>
-    <label className="block mb-2 text-lg font-bold">Add Task</label>
-        <Separator className="my-3" />
+      <label className="block mb-2 text-lg font-bold">Add Task</label>
+      <Separator className="my-3" />
 
       <form
         onSubmit={handleCreateTask}
@@ -81,11 +80,11 @@ const AddTask = (props: { parentId: string | null }) => {
       >
         <div className="flex w-full flex-col items-start justify-between rounded-md border space-x-1 px-1 py-1 sm:flex-row sm:items-center">
           <Select
-            onValueChange={(value) => setType(value)}
+            onValueChange={(value) => dispatch(setType(value))}
             defaultValue={defaultTypeValue}
           >
             <SelectTrigger className="w-[87px]">
-              <SelectValue placeholder={type === "task" ? "Task" : "Project"} />
+              <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
@@ -101,11 +100,10 @@ const AddTask = (props: { parentId: string | null }) => {
             value={title}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const updatedTitle = e.target.value;
-              setTitle(updatedTitle);
-              addOrUpdateProperty("title", updatedTitle);
+              dispatch(setTitle(updatedTitle));
             }}
           />
-          <MorePropertiesDropdownAddTask addOrUpdateProperty={addOrUpdateProperty}/>
+          <MorePropertiesDropdownAddTask />
           <div className="flex flex-col items-start justify-between rounded-md border px-1 py-0 sm:flex-row sm:items-center">
             <Button variant={"ghost"} type="submit">
               Add

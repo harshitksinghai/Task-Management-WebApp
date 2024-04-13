@@ -4,23 +4,25 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useEffect, useState } from "react";
+import { setDueDate } from "@/manageState/slices/addTaskStatesSlice";
+import { useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 
-type AddOrUpdatePropertyFunction = (key: string, value: any) => void;
+const SetDueDateInDropdown = () => {
 
-const SetDueDateInDropdown = (props: {addOrUpdateProperty: AddOrUpdatePropertyFunction}) => {
-  const [date, setDate] = useState<Date>();
-  console.log("initial");
-  console.log(date);
-  console.log(" z z");
+  const dueDate = useSelector((state: any) => state.addTaskStates.properties.dueDate); // currently in UTC
 
-  useEffect(() => {
-    console.log(date);
-    if (date) {
-      props.addOrUpdateProperty("dueDate", date);
-    }
-  }, [date])
+  const memoizedDueDate = useMemo(() => {
+    return dueDate ? new Date(dueDate) : undefined;
+  }, [dueDate]);
+
+  const dispatch = useDispatch();
+
+  function handleDueDateUpdate(dueDate: Date | undefined){
+    const serializableDate = dueDate ? dueDate.toISOString() : undefined; // local time to UTC
+    dispatch(setDueDate(serializableDate));
+  }
 
   return (
     <div>
@@ -29,8 +31,8 @@ const SetDueDateInDropdown = (props: {addOrUpdateProperty: AddOrUpdatePropertyFu
         <DropdownMenuSubContent className="p-0">
           <Calendar
             mode="single"
-            selected={date}
-            onSelect={setDate}
+            selected={memoizedDueDate}
+            onSelect={handleDueDateUpdate}
             initialFocus
           />
         </DropdownMenuSubContent>

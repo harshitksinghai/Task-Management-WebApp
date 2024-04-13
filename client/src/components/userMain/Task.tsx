@@ -3,8 +3,9 @@ import { Checkbox } from "../ui/checkbox";
 import { Input } from "../ui/input";
 import {
   TaskProperties,
+  updateTaskLocal,
 } from "@/manageState/slices/taskSlice";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { SetAndSeeDueDate } from "./taskProperties/SetAndSeeDueDate";
@@ -15,8 +16,6 @@ const Task = (props: any) => {
 
   const [title, setTitle] = useState<string>(props.task.properties.title);
   const [isCompleted, setIsCompleted] = useState<boolean>(props.task.properties.isCompleted);
-  const [type, setType] = useState<string>("task");
-  const [properties, setProperties] = useState<TaskProperties>({});
 
   const dispatch = useDispatch();
 
@@ -28,22 +27,33 @@ const Task = (props: any) => {
 
   const [updateTask] = useUpdateTaskMutation();
 
-  const addOrUpdateProperty = (key: string, value: any) => {
-    setProperties((prevProperties) => ({
-      ...prevProperties,
-      [key]: value,
-    }));
-  };
+  function updateProperties(key: string, value: any){
+    const properties = {...props.task.properties};
 
+    if (value !== undefined) {
+      properties[key as keyof TaskProperties] = value;
+    } else {
+      if (properties.hasOwnProperty(key as keyof TaskProperties)) { // If the value is undefined, delete the key-value pair if it exists
+        delete properties[key as keyof TaskProperties];
+      }
+    }
+ 
+    return properties;
+  }
   async function handleUpdateTaskProperty(key: string, value: any){
     try {
-      const updatedProperties = { ...props.task.properties, [key]: value };
+      const updatedProperties = updateProperties(key, value);
+      
       await updateTask({ taskId: props.task._id, properties: updatedProperties });
-      console.log('Task updated successfully');
+      console.log('Task updated successfully in database');
+
+      dispatch(updateTaskLocal({taskId: props.task._id, properties: updatedProperties}))
+      console.log('Task updated successfully in local');
     } catch (error) {
       console.error('Error updating task:', error);
     }
   }
+  
 
   return (
 
@@ -66,12 +76,12 @@ const Task = (props: any) => {
           const updatedTitle = e.target.value;
           setTitle(updatedTitle);
         }}
-        onBlur={() => handleUpdateTaskProperty("title", title)}
+        onBlur={() => {handleUpdateTaskProperty("title", title);}}
       />
       <Link to={`/main/:${props.task._id}`}>
         <Button variant={"outline"}>Open</Button>
       </Link>
-      <SetAndSeeDueDate />
+      <SetAndSeeDueDate dueDate={props.task.properties.dueDate} handleUpdateTaskProperty={handleUpdateTaskProperty}/>
 
       
       <MorePropertiesDropdown task={props.task} />

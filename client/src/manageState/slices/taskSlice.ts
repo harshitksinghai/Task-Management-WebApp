@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 export interface TaskProperties {
   title?: string;
@@ -24,7 +24,7 @@ const initialState: TaskState = {
   tasks: [],
 };
 
-export const taskSlice = createSlice({
+const taskSlice = createSlice({
   name: "task",
   initialState,
   reducers: {
@@ -44,13 +44,15 @@ export const taskSlice = createSlice({
     clearTasksLocal: (state) => {
       state.tasks = [];
     },
-    updateTaskLocal: (state, action: PayloadAction<{ taskId: string }>) => {
+    updateTaskLocal: (state, action) => {
       const taskToUpdate = state.tasks.find((task) => task._id === action.payload.taskId);
-      // Update the task as needed
+      if(taskToUpdate){
+        taskToUpdate.properties = { ...action.payload.properties };
+      }
     },
   },
 });
 
-export const { createTaskLocal, fetchTasksToLocal, deleteTaskLocal, clearTasksLocal } = taskSlice.actions;
+export const { createTaskLocal, fetchTasksToLocal, deleteTaskLocal, clearTasksLocal, updateTaskLocal } = taskSlice.actions;
 
 export default taskSlice.reducer;

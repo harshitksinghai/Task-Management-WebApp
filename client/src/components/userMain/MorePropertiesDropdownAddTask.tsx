@@ -2,16 +2,13 @@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuSub, DropdownMenuSubContent, DropdownMenuSubTrigger, DropdownMenuTrigger } from '../ui/dropdown-menu'
 import { Button } from '../ui/button'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
-import { Calendar } from '../ui/calendar'
 import { useState } from 'react'
 import SetDueDateInDropdown from './taskProperties/SetDueDateInDropdown'
 
-type AddOrUpdatePropertyFunction = (key: string, value: any) => void;
 
-const MorePropertiesDropdownAddTask = (props: {addOrUpdateProperty: AddOrUpdatePropertyFunction}) => {
-    const [date, setDate] = useState<Date>();
+
+const MorePropertiesDropdownAddTask = () => {
     const [open, setOpen] = useState<boolean>(false);
-    
   return (
     <div>
       <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -29,7 +26,7 @@ const MorePropertiesDropdownAddTask = (props: {addOrUpdateProperty: AddOrUpdateP
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 {/*set due date... */}
-                <SetDueDateInDropdown addOrUpdateProperty={props.addOrUpdateProperty}/>
+                <SetDueDateInDropdown />
 
 
                 
