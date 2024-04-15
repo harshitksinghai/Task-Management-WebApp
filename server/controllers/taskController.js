@@ -67,14 +67,23 @@ const deleteTaskById = asyncHandler(async (req, res) => {
 const updateTask = asyncHandler(async (req, res) => {
     const taskId = req.params.taskId;
     const { properties } = req.body;
+    console.log("properties");
+
+    console.log(properties);
     const taskToUpdate = await Task.findById(taskId);
     if (!taskToUpdate) {
         res.status(404);
         throw new Error('Task not found');
     }
     try {
-        taskToUpdate.properties = { ...properties };
-        const updatedTask = await taskToUpdate.save();
+        //taskToUpdate.properties = { ...properties };
+        //console.log("taskToUpdate.properties")
+        //console.log(taskToUpdate.properties)
+        //const updatedTask = await taskToUpdate.save();
+        
+        const updatedTask = await Task.findByIdAndUpdate(taskId, { properties }, { new: true });
+        console.log("updated task")
+        console.log(updatedTask)
         res.status(200).json(updatedTask);
     } catch (err) {
         res.status(500);

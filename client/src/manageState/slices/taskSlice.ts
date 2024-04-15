@@ -4,6 +4,7 @@ export interface TaskProperties {
   title?: string;
   isCompleted?: boolean;
   dueDate?: Date;
+  daysLeft?: number | string;
   // Add other properties here as needed
 }
 

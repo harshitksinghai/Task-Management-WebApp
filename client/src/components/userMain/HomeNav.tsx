@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { UserNav } from "./user-nav";
 
 
-const UserMainNav = () => {
+const HomeNav = () => {
     const scrolled = UseScrollTop();
     return (
         <div className={cn("z-50 bg-background dark:bg-[#1F1F1F] fixed top-0 flex items-center w-full p-2.5",
@@ -17,4 +17,4 @@ const UserMainNav = () => {
         </div>
     )
 }
-export default UserMainNav;
+export default HomeNav;

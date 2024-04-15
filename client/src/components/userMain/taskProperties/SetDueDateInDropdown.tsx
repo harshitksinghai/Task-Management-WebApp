@@ -4,7 +4,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@/components/ui/dropdown-menu";
-import { setDueDate } from "@/manageState/slices/addTaskStatesSlice";
+import { setDaysLeft, setDueDate } from "@/manageState/slices/addTaskStatesSlice";
 import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -22,6 +22,7 @@ const SetDueDateInDropdown = () => {
   function handleDueDateUpdate(dueDate: Date | undefined){
     const serializableDate = dueDate ? dueDate.toISOString() : undefined; // local time to UTC
     dispatch(setDueDate(serializableDate));
+    dispatch(setDaysLeft(serializableDate));
   }
 
   return (

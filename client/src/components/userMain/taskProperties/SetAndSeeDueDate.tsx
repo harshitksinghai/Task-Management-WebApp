@@ -1,6 +1,6 @@
 
 import { CalendarIcon } from "@radix-ui/react-icons"
-import { format } from "date-fns"
+import { differenceInDays, format } from "date-fns"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -13,6 +13,8 @@ import {
 import { useMemo, useState } from "react"
 
 
+
+
 export function SetAndSeeDueDate(props: any) {
   const [dueDate, setDueDate] = useState(props.dueDate)
 
@@ -20,15 +22,25 @@ export function SetAndSeeDueDate(props: any) {
     return dueDate ? new Date(dueDate) : undefined;
   }, [dueDate]);
 
-  function handleDueDateUpdate(dueDate: Date | undefined){
-    const serializableDate = dueDate ? dueDate.toISOString() : undefined; // local time to UTC
+  function handleSetDueDate(selectedDate: Date | undefined){
+    const serializableDate = selectedDate ? selectedDate.toISOString() : undefined;
     setDueDate(serializableDate);
-    props.handleUpdateTaskProperty("dueDate", serializableDate);
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const daysLeft = selectedDate ? differenceInDays(selectedDate, today) : '-';
+    props.setDaysLeft(daysLeft);
+    
+    const updatedPropertiesWithDueDate = props.handleSetProperties("dueDate", serializableDate, props.properties);
+    const updatedPropertiesWithDueDateDaysLeft = props.handleSetProperties("daysLeft", daysLeft, updatedPropertiesWithDueDate);
+    props.handleUpdateProperties(updatedPropertiesWithDueDateDaysLeft);
   }
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
+      <PopoverTrigger 
+        asChild 
+        >
         <Button 
           variant={"outline"}
           className={cn(
@@ -44,7 +56,7 @@ export function SetAndSeeDueDate(props: any) {
         <Calendar
           mode="single"
           selected={memoizedDueDate}
-          onSelect={handleDueDateUpdate}
+          onSelect={handleSetDueDate}
           initialFocus
         />
       </PopoverContent>

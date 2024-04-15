@@ -21,7 +21,9 @@ const TodayTasks = (props: { parentId: string | null }) => {
         console.error("Error fetching tasks:", err);
       }
     }
-    getTasks();
+    if (tasks.length === 0) {
+      getTasks();
+    }
   }, []);
 
   const { tasks } = useSelector((state: any) => state.task);

@@ -41,10 +41,18 @@ export function RegisterForm({ className, ...props }: LoginUserAuthFormProps) {
       setIsPassConfirmed(false);
       setIsLoading(true);
       const res = await register({name, email, password}).unwrap();
+
+      console.log("reg res");
+      console.log(res);
+
       dispatch(setCredentials({ user: res}));
       navigate("/main");
     } catch (err: any) {
       setIsPassConfirmed(true);
+
+      console.log("reg err");
+      console.log(err);
+      
       setError(err.data.message);
     } finally {
       setIsLoading(false);

@@ -41,7 +41,9 @@ export function LoginForm({ className, ...props }: UserAuthFormProps) {
       dispatch(setCredentials({user: res}));
       navigate("/main");
     } catch (err: any) {
-      setError(err.response.data.message);
+      console.log("login err");
+      console.log(err);
+      setError(err.data.message);
     } finally {
       setIsLoading(false);
     }

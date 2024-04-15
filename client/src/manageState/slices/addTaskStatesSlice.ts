@@ -1,3 +1,4 @@
+import { differenceInDays } from "date-fns";
 import { TaskProperties } from "./taskSlice";
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
@@ -10,7 +11,7 @@ export interface AddTaskStates {
 
 const initialState: AddTaskStates = {
     type: "task",
-    properties: { title: "", isCompleted: false },
+    properties: { title: "", isCompleted: false, daysLeft: '-' },
     content: [],
     parentId: null,
 };
@@ -41,8 +42,15 @@ const addTaskStatesSlice = createSlice({
         setProperties(state, action) {
             state.properties = action.payload;
         },
+        setDaysLeft(state, action){
+            const dueDate = action.payload;
+            const localDueDate = dueDate ? new Date(dueDate) : undefined;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            state.properties.daysLeft = localDueDate ? differenceInDays(localDueDate, today) : '-';
+        },
         clearProperties(state) {
-            state.properties = { title: "", isCompleted: false };
+            state.properties = { title: "", isCompleted: false, daysLeft: '-'  };
         },
         updateProperties(state, action: PayloadAction<{ key: string; value: any }>) {
             const key = action.payload.key;
@@ -59,5 +67,5 @@ const addTaskStatesSlice = createSlice({
     },
 });
 
-export const { setTitle, setType, setDueDate, setParentId, setIsCompleted, setProperties, clearProperties, updateProperties } = addTaskStatesSlice.actions;
+export const { setTitle, setType, setDueDate, setParentId, setIsCompleted, setProperties, setDaysLeft, clearProperties, updateProperties } = addTaskStatesSlice.actions;
 export default addTaskStatesSlice.reducer;
