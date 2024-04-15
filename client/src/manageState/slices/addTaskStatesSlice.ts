@@ -5,15 +5,15 @@ import { createSlice } from "@reduxjs/toolkit";
 export interface AddTaskStates {
     type: string;
     properties: TaskProperties;
-    content: string[];
-    parentId: string | null;
+    subTasks: string[];
+    parentId: string | undefined;
 }
 
 const initialState: AddTaskStates = {
     type: "task",
     properties: { title: "", isCompleted: false, daysLeft: '-' },
-    content: [],
-    parentId: null,
+    subTasks: [],
+    parentId: undefined,
 };
 
 const addTaskStatesSlice = createSlice({

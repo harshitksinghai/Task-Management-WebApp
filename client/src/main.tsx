@@ -7,7 +7,6 @@ import ProfileScreen from "./screens/ProfileScreen.tsx";
 import RegisterScreen from "./screens/RegisterScreen.tsx";
 import TaskScreen from "./screens/TaskScreen.tsx";
 import UserMain from "./screens/HomeScreen.tsx";
-import React from "react";
 import ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
 import {

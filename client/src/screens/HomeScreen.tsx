@@ -8,7 +8,7 @@ const HomeScreen = () => {
     <ThemeProvider defaultTheme="system" storageKey="task-theme">
       <div className="h-full dark:bg-[#1F1F1F] flex flex-col justify-center items-center">
         <HomeNav />
-        <div className="h-full pt-40 flex flex-col items-center justify-center">
+        <div className="pt-40">
           <TaskHome />
         </div>
       </div>

@@ -3,7 +3,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuLabel
 import { Button } from '../ui/button'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
-import SetDueDateInDropdown from './taskProperties/SetDueDateInDropdown'
+import SetDueDateInDropdown from './TaskProperties/SetDueDateInDropdown'
 
 
 

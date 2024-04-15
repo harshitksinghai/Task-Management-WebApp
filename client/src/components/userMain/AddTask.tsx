@@ -17,13 +17,18 @@ import {
   setParentId,
   clearProperties,
 } from "@/manageState/slices/addTaskStatesSlice";
-import { useCreateTaskMutation } from "@/manageState/slices/taskApiSlice";
-import { createTaskLocal } from "@/manageState/slices/taskSlice";
+import {
+  useCreateTaskMutation,
+  useUpdateParentTaskSubTasksFieldMutation,
+} from "@/manageState/slices/taskApiSlice";
+import { createTaskLocal, updateParentTaskSubTasksFieldLocal } from "@/manageState/slices/taskSlice";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-const AddTask = (props: { parentId: string | null }) => {
+const AddTask = (props: { parentId: string | undefined }) => {
+  
   const dispatch = useDispatch();
-
+  const [localTitle, setLocalTitle] = useState("");
   const { userInfo } = useSelector((state: any) => state.auth);
   const userId = userInfo._id;
 
@@ -31,15 +36,29 @@ const AddTask = (props: { parentId: string | null }) => {
   const defaultTypeValue = "task";
 
   const { properties } = useSelector((state: any) => state.addTaskStates);
-  const title = useSelector((state: any) => state.addTaskStates.properties.title);
+  const title = useSelector(
+    (state: any) => state.addTaskStates.properties.title
+  );
 
-  const { content } = useSelector((state: any) => state.addTaskStates);
+  const { subTasks } = useSelector((state: any) => state.addTaskStates);
   const { parentId } = useSelector((state: any) => state.addTaskStates);
-  if (props.parentId !== null) {
-    dispatch(setParentId(props.parentId));
-  }
+
+  useEffect(() => {
+    setLocalTitle(properties.title);
+  }, [properties.title]);
+
+  useEffect(() => {
+    if (props.parentId !== undefined) {
+      dispatch(setParentId(props.parentId));
+      console.log("props.parentId");
+      console.log(props.parentId);
+    } else {
+      dispatch(setParentId(undefined));
+    }
+  }, [props.parentId]);
 
   const [createTask] = useCreateTaskMutation();
+  const [UpdateParentTaskSubTasksField] = useUpdateParentTaskSubTasksFieldMutation();
 
   async function handleCreateTask(e: React.FormEvent) {
     e.preventDefault();
@@ -48,21 +67,35 @@ const AddTask = (props: { parentId: string | null }) => {
       console.log("Title is required.");
       return; // Exit the function early if title is empty
     }
+
     try {
       const task = await createTask({
         userId,
         type,
         properties,
-        content,
+        subTasks,
         parentId,
       });
-      //console.log(task); // data {....}
+      console.log(task); // data {....}
       dispatch(createTaskLocal(task));
+
+      if(props.parentId !== undefined && 'data' in task ){
+        const taskId = task.data?._id;
+
+        await UpdateParentTaskSubTasksField({
+          parentId: props.parentId,
+          taskId:  taskId
+        });
+        dispatch(updateParentTaskSubTasksFieldLocal({
+          parentId: props.parentId,
+          taskId:  taskId
+        }))
+      }
 
       dispatch(setType("task"));
       dispatch(setDueDate(undefined));
       dispatch(setTitle(""));
-      dispatch(setParentId(null));
+      dispatch(setParentId(undefined));
       dispatch(clearProperties());
     } catch (err) {
       console.log(err);
@@ -71,7 +104,9 @@ const AddTask = (props: { parentId: string | null }) => {
 
   return (
     <>
-      <label className="block mb-2 text-lg font-bold">Add Task</label>
+      <label className="block mb-2 text-lg font-bold">
+        {props.parentId ? "Add Sub-Task" : "Add Task"}
+      </label>
       <Separator className="my-3" />
 
       <form
@@ -97,7 +132,7 @@ const AddTask = (props: { parentId: string | null }) => {
           <Input
             className="min-w-[37rem]"
             placeholder="Enter task..."
-            value={title}
+            value={localTitle}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const updatedTitle = e.target.value;
               dispatch(setTitle(updatedTitle));
@@ -111,6 +146,7 @@ const AddTask = (props: { parentId: string | null }) => {
           </div>
         </div>
       </form>
+      <Separator className="my-3" />
     </>
   );
 };

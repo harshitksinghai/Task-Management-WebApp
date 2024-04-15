@@ -32,9 +32,9 @@ const createTask = asyncHandler(async (req, res) => {
 });
 
 // @desc    show all tasks
-// route    GET /api/tasks
+// route    POST /api/tasks/fetch
 // @access  Private
-const showTasks = asyncHandler(async (req, res) => {
+const showAllTasks = asyncHandler(async (req, res) => {
     const userId = req.body.userId;
     const tasks = await Task.find({userId: userId});
     if (tasks) {
@@ -67,21 +67,13 @@ const deleteTaskById = asyncHandler(async (req, res) => {
 const updateTask = asyncHandler(async (req, res) => {
     const taskId = req.params.taskId;
     const { properties } = req.body;
-    console.log("properties");
 
-    console.log(properties);
-    const taskToUpdate = await Task.findById(taskId);
-    if (!taskToUpdate) {
-        res.status(404);
-        throw new Error('Task not found');
-    }
     try {
-        //taskToUpdate.properties = { ...properties };
-        //console.log("taskToUpdate.properties")
-        //console.log(taskToUpdate.properties)
-        //const updatedTask = await taskToUpdate.save();
-        
         const updatedTask = await Task.findByIdAndUpdate(taskId, { properties }, { new: true });
+        if (!updatedTask) {
+            res.status(404);
+            throw new Error('Task not found');
+        }
         console.log("updated task")
         console.log(updatedTask)
         res.status(200).json(updatedTask);
@@ -91,11 +83,76 @@ const updateTask = asyncHandler(async (req, res) => {
     }
 });
 
+// @desc    show subtasks of specific task
+// route    GET /api/tasks/subtasks/:parentId
+// @access  Private
+const showSubTasks = asyncHandler(async (req, res) => {
+    
+    const parentId = req.params.parentId;
+    
+    // Find the parent task by ID
+    const parentTask = await Task.findById(parentId);
+    
+    if (!parentTask) {
+        // If parent task not found, return 404
+        res.status(404);
+        console.log("Parent task not found");
+        throw new Error("Parent task not found");
+    }
+    // Fetch sub-tasks based on parent task's subTasks array
+    if(parentTask.subTasks.length === 0){
+        res.status(404);
+        console.log("No subtasks exist");
+        throw new Error("No subtasks exist");
+    }
 
+    const filteredSubTasks = await Task.find({ _id: { $in: parentTask.subTasks } });
+    if(filteredSubTasks){
+        res.status(200).json(filteredSubTasks);
+    }
+    else{
+        res.status(500);
+        console.log("Error fetching subtasks");
+        throw new Error("Error fetching subtasks");
+    }
+});
+
+// @desc    update parent-task's subTasks field with new sub-task id
+// route    PATCH /api/tasks/subtasks/:parentId
+// @access  Private
+const updateParentTaskSubTasksField = asyncHandler(async (req, res) => {
+    const parentId = req.params.parentId;
+    const { taskId } = req.body;
+
+    try {
+        // Find the parent task by its ID
+        const parentTask = await Task.findById(parentId);
+        if (!parentTask) {
+            res.status(404);
+            console.log("Parent Task not found");
+            throw new Error("Parent Task not found");
+        }
+
+        // Add the new taskId to the subTasks array
+        parentTask.subTasks.push(taskId);
+
+        // Save the updated parent task
+        const updatedParentTask = await parentTask.save();
+
+        console.log("Updated parent task:", updatedParentTask);
+        res.status(200).json(updatedParentTask);
+    } catch (err) {
+        res.status(500);
+        console.log("Parent Task subTasks id updation unsuccessful");
+        throw new Error("Parent Task subTasks id updation unsuccessful");
+    }
+});
 
 export {
     createTask,
-    showTasks,
+    showAllTasks,
     deleteTaskById,
-    updateTask
+    updateTask,
+    showSubTasks,
+    updateParentTaskSubTasksField
 };

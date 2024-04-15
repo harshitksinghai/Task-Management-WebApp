@@ -1,15 +1,16 @@
 import { Separator } from "../ui/separator";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useFetchTasksMutation } from "@/manageState/slices/taskApiSlice";
+import { useFetchAllTasksMutation } from "@/manageState/slices/taskApiSlice";
 import { fetchTasksToLocal } from "@/manageState/slices/taskSlice";
 import Task from "./Task";
 
-const TodayTasks = (props: { parentId: string | null }) => {
+const TodayTasks = (props: { parentId: string | undefined }) => {
 
   const { userInfo } = useSelector((state: any) => state.auth);
   const userId = userInfo._id;
-  const [fetchTasks] = useFetchTasksMutation();
+
+  const [fetchTasks] = useFetchAllTasksMutation();
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -31,7 +32,7 @@ const TodayTasks = (props: { parentId: string | null }) => {
   return (
     <div>
       <div>
-        <Separator className="my-4" />
+        
         <label className="block mb-2 text-lg font-bold">My Tasks</label>
         <Separator className="my-3" />
 

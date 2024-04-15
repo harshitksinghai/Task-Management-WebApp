@@ -1,6 +1,7 @@
 import { apiSlice } from "./apiSlice";
 
 const TASKS_URL = "/api/tasks";
+const SUBTASKS_URL = "/api/tasks/subtasks";
 
 export const taskApiSlice = apiSlice.injectEndpoints({
     endpoints: (builder) => ({
@@ -11,11 +12,24 @@ export const taskApiSlice = apiSlice.injectEndpoints({
                 body: data
             }),
         }),
-        fetchTasks: builder.mutation({
+        fetchAllTasks: builder.mutation({
             query: (data) => ({
                 url: `${TASKS_URL}/fetch`,
                 method: 'POST',
                 body: data
+            }),
+        }),
+        fetchSubTasks: builder.query({
+            query: (parentId) => ({
+                url: `${SUBTASKS_URL}/${parentId}`,
+                method: 'GET',
+            }),
+        }),
+        updateParentTaskSubTasksField: builder.mutation({
+            query: ({parentId, taskId}) => ({
+                url: `${SUBTASKS_URL}/${parentId}`,
+                method: 'PATCH',
+                body: { taskId },
             }),
         }),
         deleteTask: builder.mutation({
@@ -34,4 +48,4 @@ export const taskApiSlice = apiSlice.injectEndpoints({
     }),
 })
 
-export const { useCreateTaskMutation, useFetchTasksMutation, useDeleteTaskMutation, useUpdateTaskMutation } = taskApiSlice;
+export const { useCreateTaskMutation, useFetchAllTasksMutation, useDeleteTaskMutation, useUpdateTaskMutation, useFetchSubTasksQuery, useUpdateParentTaskSubTasksFieldMutation } = taskApiSlice;

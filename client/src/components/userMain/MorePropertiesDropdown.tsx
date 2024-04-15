@@ -3,7 +3,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuLabel
 import { Button } from '../ui/button'
 import { DotsHorizontalIcon } from '@radix-ui/react-icons'
 import { useState } from 'react'
-import DeleteTaskInDropdown from './taskProperties/DeleteTaskInDropdown'
+import DeleteTaskInDropdown from './TaskProperties/DeleteTaskInDropdown'
 
 const MorePropertiesDropdown = (props: {task: any}) => {
     const [open, setOpen] = useState<boolean>(false);

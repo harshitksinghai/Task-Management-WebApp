@@ -5,8 +5,8 @@ const TaskHome = () => {
 
   return (
     <div>
-      <AddTask parentId={null} />
-      <TodayTasks parentId={null} />
+      <AddTask parentId={undefined} />
+      <TodayTasks parentId={undefined} />
     </div>
   );
 };

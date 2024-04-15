@@ -5,6 +5,7 @@ export interface TaskProperties {
   isCompleted?: boolean;
   dueDate?: Date;
   daysLeft?: number | string;
+  content?: Text;
   // Add other properties here as needed
 }
 
@@ -13,7 +14,7 @@ interface Task {
   userId: string;
   type: string;
   properties: TaskProperties;
-  content: string[];
+  subTasks: string[];
   parentId: string;
 }
 
@@ -51,9 +52,16 @@ const taskSlice = createSlice({
         taskToUpdate.properties = { ...action.payload.properties };
       }
     },
+    updateParentTaskSubTasksFieldLocal: (state, action) => {
+      const { parentId, taskId } = action.payload;
+      const parentTaskToUpdate = state.tasks.find((task) => task._id === parentId);
+      if(parentTaskToUpdate){
+        parentTaskToUpdate.subTasks.push(taskId);
+      }
+    },
   },
 });
 
-export const { createTaskLocal, fetchTasksToLocal, deleteTaskLocal, clearTasksLocal, updateTaskLocal } = taskSlice.actions;
+export const { createTaskLocal, fetchTasksToLocal, deleteTaskLocal, clearTasksLocal, updateTaskLocal, updateParentTaskSubTasksFieldLocal } = taskSlice.actions;
 
 export default taskSlice.reducer;

@@ -17,6 +17,7 @@ import { useMemo, useState } from "react"
 
 export function SetAndSeeDueDate(props: any) {
   const [dueDate, setDueDate] = useState(props.dueDate)
+  const [properties, setProperties] = useState()
 
   const memoizedDueDate = useMemo(() => {
     return dueDate ? new Date(dueDate) : undefined;
@@ -33,10 +34,11 @@ export function SetAndSeeDueDate(props: any) {
     
     const updatedPropertiesWithDueDate = props.handleSetProperties("dueDate", serializableDate, props.properties);
     const updatedPropertiesWithDueDateDaysLeft = props.handleSetProperties("daysLeft", daysLeft, updatedPropertiesWithDueDate);
-    props.handleUpdateProperties(updatedPropertiesWithDueDateDaysLeft);
+    setProperties(updatedPropertiesWithDueDateDaysLeft)
   }
 
   return (
+    
     <Popover>
       <PopoverTrigger 
         asChild 
@@ -52,14 +54,17 @@ export function SetAndSeeDueDate(props: any) {
           {dueDate ? format(dueDate, "PPP") : <span>Pick a date</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
+      
+      <PopoverContent onInteractOutside={() => {props.handleUpdateProperties(properties)}} className="w-auto p-0" align="start">
+        <Calendar 
           mode="single"
           selected={memoizedDueDate}
           onSelect={handleSetDueDate}
           initialFocus
         />
       </PopoverContent>
+
     </Popover>
+    
   )
 }
