@@ -52,20 +52,8 @@ const addTaskStatesSlice = createSlice({
         clearProperties(state) {
             state.properties = { title: "", isCompleted: false, daysLeft: '-'  };
         },
-        updateProperties(state, action: PayloadAction<{ key: string; value: any }>) {
-            const key = action.payload.key;
-            const value = action.payload.value;
-            if (value !== undefined) {
-                state.properties[key as keyof TaskProperties] = value;
-              } else {
-                // If the value is undefined, delete the key-value pair if it exists
-                if (state.properties.hasOwnProperty(key as keyof TaskProperties)) {
-                  delete state.properties[key as keyof TaskProperties];
-                }
-              }
-        },
     },
 });
 
-export const { setTitle, setType, setDueDate, setParentId, setIsCompleted, setProperties, setDaysLeft, clearProperties, updateProperties } = addTaskStatesSlice.actions;
+export const { setTitle, setType, setDueDate, setParentId, setIsCompleted, setProperties, setDaysLeft, clearProperties } = addTaskStatesSlice.actions;
 export default addTaskStatesSlice.reducer;
