@@ -1,6 +1,6 @@
 import { differenceInDays } from "date-fns";
 import { TaskProperties } from "./taskSlice";
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 
 export interface AddTaskStates {
     type: string;
