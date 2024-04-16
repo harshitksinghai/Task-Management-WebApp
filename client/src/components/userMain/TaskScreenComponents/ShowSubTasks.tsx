@@ -21,7 +21,7 @@ const ShowSubTasks = (props: { parentId: string | undefined }) => {
   return (
     <div>
       <div>
-        <label className="block mb-2 text-lg font-bold">My Tasks</label>
+        <label className="block mb-2 text-lg font-bold">Sub Tasks</label>
         <Separator className="my-3" />
         
         {subTasks && subTasks.map((task: any) => (

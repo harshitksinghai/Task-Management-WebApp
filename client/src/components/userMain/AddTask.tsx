@@ -28,7 +28,6 @@ import { useDispatch, useSelector } from "react-redux";
 const AddTask = (props: { parentId: string | undefined }) => {
   
   const dispatch = useDispatch();
-  const [localTitle, setLocalTitle] = useState("");
   const { userInfo } = useSelector((state: any) => state.auth);
   const userId = userInfo._id;
 
@@ -43,9 +42,7 @@ const AddTask = (props: { parentId: string | undefined }) => {
   const { subTasks } = useSelector((state: any) => state.addTaskStates);
   const { parentId } = useSelector((state: any) => state.addTaskStates);
 
-  useEffect(() => {
-    setLocalTitle(properties.title);
-  }, [properties.title]);
+
 
   useEffect(() => {
     if (props.parentId !== undefined) {
@@ -132,7 +129,7 @@ const AddTask = (props: { parentId: string | undefined }) => {
           <Input
             className="min-w-[37rem]"
             placeholder="Enter task..."
-            value={localTitle}
+            value={title}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const updatedTitle = e.target.value;
               dispatch(setTitle(updatedTitle));

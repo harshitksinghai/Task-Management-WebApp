@@ -19,7 +19,7 @@ const Task = (props: any) => {
   const { userInfo } = useSelector((state: any) => state.auth);
   const userId = userInfo._id;
 
-  const [title1, setTitle1] = useState(props.task.properties.title);
+  const [title, setTitle] = useState(props.task.properties.title);
   const [isCompleted, setIsCompleted] = useState(
     props.task.properties.isCompleted
   );
@@ -35,8 +35,7 @@ const Task = (props: any) => {
 
   const handleTitleChange = (e: any) => {
     const updatedTitle = e.target.value;
-    setTitle1(updatedTitle);
-    dispatch(setTitle(updatedTitle));
+    setTitle(updatedTitle);
   };
 
   const handleIsCompletedChange = (checked: boolean) => {
@@ -99,12 +98,12 @@ const Task = (props: any) => {
       </div>
       <Input
         className="min-w-[24rem]"
-        value={title1}
+        value={title}
         onChange={handleTitleChange}
         onBlur={() => {
           const updatedProperties = handleSetProperties(
             "title",
-            title1,
+            title,
             properties
           );
           handleUpdateProperties(updatedProperties);
