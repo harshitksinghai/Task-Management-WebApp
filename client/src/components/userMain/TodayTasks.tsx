@@ -15,6 +15,7 @@ const TodayTasks = (props: { parentId: string | undefined }) => {
 
   useEffect(() => {
     async function getTasks() {
+      console.log("useEffect []");
       try {
         const tasks = await fetchTasks({userId});
         dispatch(fetchTasksToLocal(tasks));
