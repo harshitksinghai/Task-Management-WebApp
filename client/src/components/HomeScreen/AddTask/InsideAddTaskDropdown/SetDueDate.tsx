@@ -9,7 +9,7 @@ import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 
-const SetDueDateInDropdown = () => {
+const SetDueDate = () => {
 
   const dueDate = useSelector((state: any) => state.addTaskStates.properties.dueDate); // currently in UTC
 
@@ -42,4 +42,4 @@ const SetDueDateInDropdown = () => {
   );
 };
 
-export default SetDueDateInDropdown;
+export default SetDueDate;

@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useFetchAllTasksMutation } from "@/manageState/slices/taskApiSlice";
 import { fetchTasksToLocal } from "@/manageState/slices/taskSlice";
-import Task from "./Task";
+import Task from "./Task/Task";
 
 const TodayTasks = (props: { parentId: string | undefined }) => {
 

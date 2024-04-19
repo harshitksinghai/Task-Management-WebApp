@@ -1,4 +1,4 @@
-import AddTask from "./AddTask";
+import AddTask from "./AddTask/AddTask";
 import TodayTasks from "./TodayTasks";
 
 const TaskHome = () => {

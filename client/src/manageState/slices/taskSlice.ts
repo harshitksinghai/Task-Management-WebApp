@@ -9,7 +9,7 @@ export interface TaskProperties {
   // Add other properties here as needed
 }
 
-interface Task {
+export interface Task {
   _id: string;
   userId: string;
   type: string;
@@ -37,8 +37,10 @@ const taskSlice = createSlice({
       }
     },
     fetchTasksToLocal: (state, action) => {
-      const newTasks = action.payload.data.filter((task: any) => !state.tasks.some((t) => t._id === task._id));
-      state.tasks.unshift(...newTasks);
+      if(action.payload.data){
+        const newTasks = action.payload.data.filter((task: any) => !state.tasks.some((t) => t._id === task._id));
+        state.tasks.unshift(...newTasks);
+      }
     },
     deleteTaskLocal: (state, action) => {
       state.tasks = state.tasks.filter((task: any) => task._id !== action.payload.taskId);
@@ -56,6 +58,9 @@ const taskSlice = createSlice({
       const { parentId, taskId } = action.payload;
       const parentTaskToUpdate = state.tasks.find((task) => task._id === parentId);
       if(parentTaskToUpdate){
+        if (!parentTaskToUpdate.subTasks) {
+          parentTaskToUpdate.subTasks = []; // Ensure subTasks is initialized as an array
+        }
         parentTaskToUpdate.subTasks.push(taskId);
       }
     },

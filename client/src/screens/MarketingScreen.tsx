@@ -1,13 +1,13 @@
-import Heroes from "@/components/marketing/Heroes";
-import Footer from "@/components/marketing/Footer";
-import { Heading } from "@/components/marketing/Heading";
-import Navbar from "@/components/marketing/Navbar";
+import Heroes from "@/components/MarketingScreen/Heroes";
+import Footer from "@/components/MarketingScreen/Footer";
+import { Heading } from "@/components/MarketingScreen/Heading";
+import Navbar from "@/components/MarketingScreen/Navbar";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useEffect } from "react";
 
-const Marketing = () => {
+const MarketingScreen = () => {
   const navigate = useNavigate();
   const {userInfo} = useSelector((state: any) => state.auth);
   
@@ -35,4 +35,4 @@ const Marketing = () => {
   );
 };
 
-export default Marketing;
+export default MarketingScreen;

@@ -1,6 +1,6 @@
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import TaskHome from "@/components/userMain/TaskHome";
-import HomeNav from "@/components/userMain/HomeNav";
+import TaskHome from "@/components/HomeScreen/TaskHome";
+import HomeNav from "@/components/HomeScreen/HomeNavBar/HomeNav";
 
 
 const HomeScreen = () => {

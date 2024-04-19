@@ -1,15 +1,5 @@
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import { Separator } from "../ui/separator";
-import MorePropertiesDropdownAddTask from "./MorePropertiesDropdownAddTask";
+import { Button } from "../../ui/button";
+import { Separator } from "../../ui/separator";
 import {
   setDueDate,
   setType,
@@ -24,30 +14,32 @@ import {
 import { createTaskLocal, updateParentTaskSubTasksFieldLocal } from "@/manageState/slices/taskSlice";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import SelectType from "./OutsideAddTaskDropdown/SelectType";
+import AddTaskInput from "./OutsideAddTaskDropdown/AddTaskInput";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../../ui/dropdown-menu';
+import { DotsHorizontalIcon } from '@radix-ui/react-icons'
+import SetDueDate from './InsideAddTaskDropdown/SetDueDate'
 
 const AddTask = (props: { parentId: string | undefined }) => {
   
   const dispatch = useDispatch();
+
   const { userInfo } = useSelector((state: any) => state.auth);
   const userId = userInfo._id;
 
   const { type } = useSelector((state: any) => state.addTaskStates);
-  const defaultTypeValue = "task";
 
   const { properties } = useSelector((state: any) => state.addTaskStates);
-  const title = useSelector(
-    (state: any) => state.addTaskStates.properties.title
-  );
-
+  const title = useSelector((state: any) => state.addTaskStates.properties.title);
   const { subTasks } = useSelector((state: any) => state.addTaskStates);
+
+  const [open, setOpen] = useState<boolean>(false);
+
   const { parentId } = useSelector((state: any) => state.addTaskStates);
-
-
-
   useEffect(() => {
     if (props.parentId !== undefined) {
       dispatch(setParentId(props.parentId));
-      console.log("props.parentId");
+      console.log("props.parentId addtask");
       console.log(props.parentId);
     } else {
       dispatch(setParentId(undefined));
@@ -56,6 +48,7 @@ const AddTask = (props: { parentId: string | undefined }) => {
 
   const [createTask] = useCreateTaskMutation();
   const [UpdateParentTaskSubTasksField] = useUpdateParentTaskSubTasksFieldMutation();
+
 
   async function handleCreateTask(e: React.FormEvent) {
     e.preventDefault();
@@ -111,31 +104,32 @@ const AddTask = (props: { parentId: string | undefined }) => {
         className="flex w-full items-center space-x-1"
       >
         <div className="flex w-full flex-col items-start justify-between rounded-md border space-x-1 px-1 py-1 sm:flex-row sm:items-center">
-          <Select
-            onValueChange={(value) => dispatch(setType(value))}
-            defaultValue={defaultTypeValue}
-          >
-            <SelectTrigger className="w-[87px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                <SelectItem value="task">Task</SelectItem>
-                <SelectItem value="project">Project</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <SelectType />
+          <AddTaskInput />
 
-          <Input
-            className="min-w-[37rem]"
-            placeholder="Enter task..."
-            value={title}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              const updatedTitle = e.target.value;
-              dispatch(setTitle(updatedTitle));
-            }}
-          />
-          <MorePropertiesDropdownAddTask />
+          {/* inside dropdown */}
+          <DropdownMenu open={open} onOpenChange={setOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="border-[1px] h-[40px]"
+              >
+                <DotsHorizontalIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-[200px]">
+              <DropdownMenuLabel>More Properties</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                {/*set due date... */}
+                <SetDueDate />
+
+
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
           <div className="flex flex-col items-start justify-between rounded-md border px-1 py-0 sm:flex-row sm:items-center">
             <Button variant={"ghost"} type="submit">
               Add

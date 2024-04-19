@@ -2,7 +2,7 @@ import App from "./App.tsx";
 import PrivateRoute from "./components/PrivateRoute.tsx";
 import { store } from "./manageState/store/store.ts";
 import LoginScreen from "./screens/LoginScreen.tsx";
-import Marketing from "./screens/Marketing.tsx";
+import MarketingScreen from "./screens/MarketingScreen.tsx";
 import ProfileScreen from "./screens/ProfileScreen.tsx";
 import RegisterScreen from "./screens/RegisterScreen.tsx";
 import TaskScreen from "./screens/TaskScreen.tsx";
@@ -19,7 +19,7 @@ import {
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
-      <Route index={true} path="/" element={<Marketing />} />
+      <Route index={true} path="/" element={<MarketingScreen />} />
       <Route index={true} path="/register" element={<RegisterScreen />} />
       <Route index={true} path="/login" element={<LoginScreen />} />
       {/* Private Routes */}
